@@ -1,0 +1,13 @@
+= Unreleased =
+* Aggiunta `@corsivo-suite/wp-admin-ui` come dipendenza privata della build editor.
+* Sostituita la conferma manuale con `ConfirmDialog`, preservando il flusso esistente basato su `Modal` e `useApplyTemplate`.
+* Allineata la generazione degli stili LTR/RTL tramite `rtl=replace`.
+* Confermato il runtime autonomo del plugin attraverso gli asset compilati, senza dipendenza runtime dal package sorgente.
+* Verificati build, lint, test e smoke test runtime della migrazione.
+
+= 1.2.0 — 13/07/2026 =
+* Prima versione pubblica: layout di partenza per l'editor a blocchi, registrati via filtro `corsivo_layouts_templates` per post type con collezione condivisa `all` e `inherit_all`.
+* Validazione e normalizzazione difensiva dei layout: struttura, profondità, dimensioni, blocchi consentiti e page template disponibili.
+* Applicazione atomica di blocchi e page template con conferma non bloccante e azione Annulla.
+* ID stabili, deduplica, payload limitato al contesto corrente, capability e lock espliciti.
+* Anteprime remote disabilitate di default con opt-in esplicito via `corsivo_layouts_allow_remote_preview`.

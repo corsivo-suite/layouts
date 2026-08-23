@@ -1,0 +1,101 @@
+.corsivo-layouts-open {
+	width: 100%;
+	justify-content: center;
+}
+
+.corsivo-layouts-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+	gap: 20px;
+}
+
+.corsivo-layouts-card {
+	--corsivo-layouts-card-border: #dcdcde;
+	--corsivo-layouts-card-name: inherit;
+
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 4px;
+	border: 0;
+	border-radius: 4px;
+	outline: 2px solid transparent;
+	background: none;
+	cursor: pointer;
+	color: inherit;
+
+	&:disabled,
+	&[aria-disabled="true"] {
+		cursor: not-allowed;
+		opacity: 0.65;
+	}
+
+	&:focus-visible {
+		outline-color: var(--wp-admin-theme-color, #3858e9);
+		outline-offset: 2px;
+	}
+
+	&:hover:not([aria-disabled="true"]):not(.is-unavailable),
+	&.is-selected {
+		--corsivo-layouts-card-border: var(--wp-admin-theme-color, #3858e9);
+		--corsivo-layouts-card-name: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&.is-unavailable {
+		opacity: 0.65;
+	}
+}
+
+.corsivo-layouts-card-preview {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	border: 1px solid var(--corsivo-layouts-card-border);
+	border-radius: 4px;
+	background: #f6f7f7;
+	pointer-events: none;
+
+	img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+}
+
+.corsivo-layouts-card-placeholder {
+	padding: 16px;
+	font-size: 12px;
+	font-weight: 600;
+	text-align: center;
+}
+
+.corsivo-layouts-card-name,
+.corsivo-layouts-card-description,
+.corsivo-layouts-card-status {
+	width: 100%;
+	text-align: left;
+}
+
+.corsivo-layouts-card-name {
+	color: var(--corsivo-layouts-card-name);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.corsivo-layouts-card-description,
+.corsivo-layouts-card-status {
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+.corsivo-layouts-card-description {
+	color: #50575e;
+}
+
+.corsivo-layouts-card-status {
+	color: #8a2424;
+}
