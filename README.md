@@ -61,7 +61,7 @@ corsivo-layouts.php è bootstrap e intera implementazione PHP namespaced: normal
 Ogni percorso è relativo alla root del plugin. `editor/node_modules/` è raggruppata come dipendenza npm; non sono presenti directory `vendor/` o `libs/tcpdf/`.
 
 - `README.md` — contratto operativo corrente di provider, normalizzazione, preview, applicazione, build, test e inventario.
-- `.gitignore` — esclude `editor/node_modules`, `.claude` e gli archivi ZIP; la build resta tracciata.
+- `.gitignore` — esclude `editor/node_modules` e gli archivi ZIP; la build resta tracciata.
 - `editor/.gitignore` — esclude `node_modules` dell'editor.
 - `changelog.txt` — storia delle release e delle policy di normalizzazione/preview.
 - `corsivo-layouts.php` — intera implementazione PHP: registry provider, validazione fail-closed, policy remote e enqueue editor.

@@ -1,4 +1,3 @@
 # editor/build is intentionally tracked: it ships in the distributed plugin
 editor/node_modules/
-.claude/
 *.zip
