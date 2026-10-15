@@ -181,6 +181,82 @@ corsivo_layouts_assert(
 );
 
 remove_filter( 'corsivo_layouts_preview_resource_attributes', $corrupted_resource_attributes_callback, 20 );
+
+$background_url = 'https://tracker.example/background.jpg';
+$background_cases = array(
+	'remote'            => array( array( 'url' => $background_url ), true ),
+	'CSS URL'           => array( 'url("' . $background_url . '")', true ),
+	'JSON object'       => array( (object) array( 'url' => $background_url ), true ),
+	'protocol-relative' => array( array( 'url' => '//tracker.example/background.jpg' ), true ),
+	'malformed URL'     => array( array( 'url' => 'https:/tracker.example/background.jpg' ), true ),
+	'same-origin'       => array( array( 'url' => home_url( '/background.jpg' ) ), false ),
+	'relative'          => array( array( 'url' => '/background.jpg' ), false ),
+	'URL metadata'      => array( array( 'url' => '/background.jpg', 'alt' => $background_url ), false ),
+);
+
+foreach ( $background_cases as $case => $background_case ) {
+	$background_blocks = array(
+		array(
+			'core/group',
+			array( 'style' => array( 'background' => array( 'backgroundImage' => $background_case[0] ) ) ),
+			array(),
+		),
+	);
+	$background_template = \Corsivo\Layouts\normalize_template(
+		array( 'id' => 'background-smoke', 'name' => 'Background smoke', 'blocks' => $background_blocks ),
+		'post',
+		0,
+		'post',
+		array(),
+		true
+	);
+
+	corsivo_layouts_assert( $background_case[1] === ! empty( $background_template['preview_disabled'] ), $case . ' background preview policy failed.' );
+	corsivo_layouts_assert( $background_blocks === $background_template['blocks'], $case . ' background attributes changed.' );
+}
+
+$nested_background_blocks = array(
+	array(
+		'core/group',
+		array(),
+		array(
+			array(
+				'core/columns',
+				array( 'style' => (object) array( 'background' => (object) array( 'backgroundImage' => (object) array( 'url' => $background_url ) ) ) ),
+				array(),
+			),
+		),
+	),
+);
+
+corsivo_layouts_assert(
+	\Corsivo\Layouts\block_templates_have_remote_resources( $nested_background_blocks, 'nested-background', 'post' ),
+	'Nested shared background support was ignored.'
+);
+
+add_filter( 'corsivo_layouts_preview_resource_attributes', $invalid_resource_attributes_callback, 20 );
+corsivo_layouts_assert(
+	\Corsivo\Layouts\block_templates_have_remote_resources( $nested_background_blocks, 'invalid-map-background', 'post' ),
+	'Invalid resource map disabled background protection.'
+);
+remove_filter( 'corsivo_layouts_preview_resource_attributes', $invalid_resource_attributes_callback, 20 );
+
+$background_opt_in_calls = array();
+$background_opt_in_callback = static function ( $allowed, $url, $template_id, $post_type ) use ( &$background_opt_in_calls, $background_url ) {
+	$background_opt_in_calls[] = array( $url, $template_id, $post_type );
+	return $background_url === $url && 'allowed-background' === $template_id && 'post' === $post_type;
+};
+add_filter( 'corsivo_layouts_allow_remote_preview', $background_opt_in_callback, 10, 4 );
+corsivo_layouts_assert(
+	! \Corsivo\Layouts\block_templates_have_remote_resources( $nested_background_blocks, 'allowed-background', 'post' ),
+	'Background remote preview opt-in was ignored.'
+);
+corsivo_layouts_assert(
+	array( array( $background_url, 'allowed-background', 'post' ) ) === $background_opt_in_calls,
+	'Background remote preview opt-in received invalid context.'
+);
+remove_filter( 'corsivo_layouts_allow_remote_preview', $background_opt_in_callback );
+
 corsivo_layouts_assert(
 	'' === \Corsivo\Layouts\normalize_preview_image(
 		'https:///tracker.example/image.jpg',

@@ -1,4 +1,5 @@
 = Unreleased =
+* Estesa la protezione delle anteprime agli sfondi backgroundImage dei blocchi, anche annidati, preservando la policy same-origin e opt-in remoto; aggiunte regressioni dedicate.
 * Aggiunta `@corsivo-suite/wp-admin-ui` come dipendenza privata della build editor.
 * Sostituita la conferma manuale con `ConfirmDialog`, preservando il flusso esistente basato su `Modal` e `useApplyTemplate`.
 * Allineata la generazione degli stili LTR/RTL tramite `rtl=replace`.

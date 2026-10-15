@@ -18,7 +18,7 @@ I contenuti dei siti cliente nascono quasi sempre dalla stessa struttura: una la
 
 **Applicazione** — sostituisce tutti i blocchi correnti (con conferma esplicita se il contenuto non è vuoto) ed eventualmente imposta il page template, in un'unica `editPost`. Lo snackbar "Layout applicato" offre Annulla, che ripristina blocchi e page template solo se il contenuto non è cambiato nel frattempo; blocchi non registrati nel client bloccano l'applicazione per intero, mai parziale.
 
-**Anteprime** — `BlockPreview` live, lazy via IntersectionObserver, o screenshot `image` se dichiarato. Le immagini remote e i blocchi che referenziano risorse remote non consentite vengono neutralizzati: screenshot solo same-origin e anteprima live sostituita da un placeholder ("Anteprima protetta"), salvo opt-in esplicito via `corsivo_layouts_allow_remote_preview`. La mappa degli attributi che caricano risorse copre i blocchi core ed è estendibile per i blocchi custom via `corsivo_layouts_preview_resource_attributes`; i default core non sono rimovibili, solo estendibili.
+**Anteprime** — `BlockPreview` live, lazy via IntersectionObserver, o screenshot `image` se dichiarato. Le immagini remote e i blocchi che referenziano risorse remote non consentite vengono neutralizzati: screenshot solo same-origin e anteprima live sostituita da un placeholder ("Anteprima protetta"), salvo opt-in esplicito via `corsivo_layouts_allow_remote_preview`. Il controllo include gli sfondi `style.background.backgroundImage` condivisi dai blocchi, anche annidati, sia come oggetto con `url` sia come stringa CSS. La mappa degli attributi che caricano risorse copre i blocchi core ed è estendibile per i blocchi custom via `corsivo_layouts_preview_resource_attributes`; i default core non sono rimovibili, solo estendibili.
 
 ## Punti rilevanti
 
@@ -36,6 +36,16 @@ I contenuti dei siti cliente nascono quasi sempre dalla stessa struttura: una la
 - **Corsivo Updater** — canale privato dichiarato nell'header `Update URI: https://www.corsivo.dev/plugins/corsivo-layouts`.
 
 ## Test
+
+Regressioni isolate sugli sfondi, senza database (dalla root del plugin):
+
+```bash
+php tests/background-preview-regressions.php
+```
+
+Il runner usa le funzioni reali del core WordPress; `WP_CORE_DIR` permette di indicare una installazione esterna. Verifica sfondi remoti, locali, annidati, URL malformati, opt-in e assenza di falsi positivi sui link testuali.
+
+Verifiche complete dell’editor e smoke con WordPress:
 
 ```bash
 cd editor
@@ -78,4 +88,5 @@ Ogni percorso è relativo alla root del plugin. `editor/node_modules/` è raggru
 - `editor/src/TemplatesModal.js` — modale di scelta, stato applicazione, error notice e griglia dei template normalizzati.
 - `editor/src/useApplyTemplate.js` — parse blocchi, conferma sostituzione, `editPost` atomico e undo protetto da stato/post.
 - `LICENSE` — testo della licenza GPL-2.0-or-later.
+- `tests/background-preview-regressions.php` — regressioni CLI isolate della policy sugli sfondi, senza database.
 - `tests/runtime-smoke.php` — smoke WordPress su merge provider, limiti, allowlist, diagnostica e privacy preview.

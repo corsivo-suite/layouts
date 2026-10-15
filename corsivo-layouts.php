@@ -284,6 +284,18 @@ function block_templates_have_remote_resources( $blocks, $template_id, $post_typ
 	}
 
 	foreach ( $blocks as $block ) {
+		$style            = (array) ( $block[1]['style'] ?? array() );
+		$background       = (array) ( $style['background'] ?? array() );
+		$background_image = $background['backgroundImage'] ?? null;
+
+		if ( is_array( $background_image ) || is_object( $background_image ) ) {
+			$background_image = ( (array) $background_image )['url'] ?? null;
+		}
+
+		if ( value_has_disallowed_remote_url( $background_image, $template_id, $post_type ) ) {
+			return true;
+		}
+
 		$attribute_names = $resource_attributes[ $block[0] ] ?? array();
 
 		if ( ! is_array( $attribute_names ) ) {
