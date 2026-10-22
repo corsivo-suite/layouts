@@ -17,7 +17,7 @@ namespace Corsivo\Layouts;
 
 defined( 'ABSPATH' ) || exit;
 
-const VERSION                 = '1.2.1';
+const VERSION                 = '1.2.2';
 const SCRIPT_HANDLE           = 'corsivo-layouts-editor';
 const MAX_TEMPLATES           = 100;
 const MAX_TEMPLATE_CANDIDATES = 500;
@@ -155,7 +155,7 @@ function normalized_url_port( $scheme, $port ) {
 }
 
 function normalize_preview_image( $image, $template_id, $post_type ) {
-	if ( ! is_string( $image ) ) {
+	if ( ! is_string( $image ) || str_contains( $image, '\\' ) ) {
 		return '';
 	}
 
@@ -223,6 +223,12 @@ function value_has_disallowed_remote_url( $value, $template_id, $post_type ) {
 
 	if ( ! is_string( $value ) ) {
 		return false;
+	}
+
+	$value = html_entity_decode( $value, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+	if ( str_contains( $value, '\\' ) ) {
+		return true;
 	}
 
 	if ( preg_match( '/^(?:https?:|\/\/)/i', $value ) ) {

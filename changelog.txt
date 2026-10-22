@@ -1,5 +1,8 @@
 = Unreleased =
+* Chiusi i bypass della policy delle anteprime tramite backslash, escape CSS ed entità HTML negli URL, mantenendo intatti gli attributi dei layout.
+* Corretto il bootstrap dei test isolati per caricare anche le funzioni UTF-8 del core.
 * Estesa la protezione delle anteprime agli sfondi backgroundImage dei blocchi, anche annidati, preservando la policy same-origin e opt-in remoto; aggiunte regressioni dedicate.
+* Allineata la costante runtime `VERSION` all'header del plugin.
 * Aggiunta `@corsivo-suite/wp-admin-ui` come dipendenza privata della build editor.
 * Sostituita la conferma manuale con `ConfirmDialog`, preservando il flusso esistente basato su `Modal` e `useApplyTemplate`.
 * Allineata la generazione degli stili LTR/RTL tramite `rtl=replace`.

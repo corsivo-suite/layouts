@@ -23,10 +23,10 @@ I contenuti dei siti cliente nascono quasi sempre dalla stessa struttura: una la
 ## Punti rilevanti
 
 - Nessuna persistenza propria: niente opzioni, niente tabelle, niente meta. I layout vivono nel codice dei provider e il risultato è normale contenuto a blocchi core — disattivando il plugin i contenuti restano intatti.
-- Privacy delle anteprime: nessuna risorsa remota viene caricata nell'editor senza opt-in, incluse le varianti malformate degli URL (protocol-relative, slash anomali).
+- Privacy delle anteprime: gli attributi risorsa riconosciuti vengono controllati prima di generare l'anteprima, incluse varianti malformate degli URL ed entità HTML. Gli URL con backslash o escape CSS disabilitano l'anteprima perché i parser PHP e browser possono interpretarli diversamente. I blocchi custom devono dichiarare i propri attributi risorsa tramite il filtro dedicato.
 - Fail-closed con diagnostica: i layout invalidi spariscono in produzione e fanno rumore in debug, sempre con l'action osservabile.
 - Un solo file PHP più il bundle editor: superficie minima, nessuna classe, tutto in namespace.
-- Requisiti dichiarati: WordPress 6.6+, PHP 8.1+. Versione 1.2.1.
+- Requisiti dichiarati: WordPress 6.6+, PHP 8.1+. Versione 1.2.2.
 
 ## Integrazioni con la suite
 

@@ -19,12 +19,14 @@ define( 'WP_CONTENT_URL', 'https://assets.layouts.test/wp-content' );
 
 $_SERVER['HTTPS'] = 'on';
 
-foreach ( array( 'compat.php', 'plugin.php', 'load.php', 'functions.php', 'formatting.php', 'kses.php', 'http.php', 'link-template.php' ) as $core_file ) {
-	require_once ABSPATH . WPINC . '/' . $core_file;
+foreach ( array( 'compat-utf8.php', 'utf8.php' ) as $core_file ) {
+	if ( is_readable( ABSPATH . WPINC . '/' . $core_file ) ) {
+		require_once ABSPATH . WPINC . '/' . $core_file;
+	}
 }
 
-if ( is_readable( ABSPATH . WPINC . '/utf8.php' ) ) {
-	require_once ABSPATH . WPINC . '/utf8.php';
+foreach ( array( 'compat.php', 'plugin.php', 'load.php', 'functions.php', 'formatting.php', 'kses.php', 'http.php', 'link-template.php' ) as $core_file ) {
+	require_once ABSPATH . WPINC . '/' . $core_file;
 }
 
 add_filter(
@@ -99,6 +101,11 @@ $blocked_backgrounds = array(
 	'malformed scheme'       => array( 'url' => 'https:tracker.example/background.jpg' ),
 	'malformed single slash' => array( 'url' => 'https:/tracker.example/background.jpg' ),
 	'malformed triple slash' => array( 'url' => 'https:///tracker.example/background.jpg' ),
+	'backslash authority'    => array( 'url' => 'https://tracker.example\\@layouts.test/background.jpg' ),
+	'backslash relative'     => array( 'url' => '\\\\tracker.example/background.jpg' ),
+	'CSS escaped URL'        => 'url("\\2f \\2f tracker.example/background.jpg")',
+	'HTML entity URL'        => array( 'url' => '&#47;&#47;tracker.example/background.jpg' ),
+	'HTML entity backslash'  => array( 'url' => '&#92;&#92;tracker.example/background.jpg' ),
 	'JSON object URL'        => (object) array( 'url' => $remote_url ),
 );
 
@@ -119,6 +126,7 @@ $allowed_backgrounds = array(
 	'root-relative URL'         => array( 'url' => '/background.jpg' ),
 	'relative URL'              => array( 'url' => 'images/background.jpg' ),
 	'local CSS URL'             => 'url("https://layouts.test/background.jpg")',
+	'local HTML entity URL'     => array( 'url' => 'https:&#47;&#47;layouts.test/background.jpg' ),
 	'relative CSS URL'          => 'url("/background.jpg")',
 	'empty URL'                 => array( 'url' => '' ),
 	'URL absent'                => array( 'id' => 42 ),
@@ -215,6 +223,21 @@ corsivo_layouts_background_assert( $opt_in_blocks === $opt_in_template['blocks']
 corsivo_layouts_background_assert( array( array( $remote_url, 'opt-in-background', 'post' ) ) === $opt_in_calls, 'Remote preview opt-in received unexpected URL or context.' );
 
 remove_filter( 'corsivo_layouts_allow_remote_preview', $opt_in_callback );
+
+foreach ( array( 'https://tracker.example\\@layouts.test/preview.jpg', '\\\\tracker.example/preview.jpg' ) as $image ) {
+	corsivo_layouts_background_assert(
+		'' === \Corsivo\Layouts\normalize_preview_image( $image, 'ambiguous-image', 'post' ),
+		'Ambiguous image URL passed the same-origin check.'
+	);
+}
+
+$html_blocks = array(
+	array( 'core/html', array( 'content' => '<img src="&#47;&#47;tracker.example/image.jpg">' ), array() ),
+);
+$html_template = corsivo_layouts_background_template( $html_blocks );
+
+corsivo_layouts_background_assert( true === ( $html_template['preview_disabled'] ?? false ), 'HTML entities bypassed remote resource protection.' );
+corsivo_layouts_background_assert( $html_blocks === $html_template['blocks'], 'Resource checks changed the original HTML.' );
 
 restore_error_handler();
 
